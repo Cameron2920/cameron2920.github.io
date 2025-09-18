@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-export default function StudyImages({ images, onOpen }) {
+export default function ProjectImages({ images, onOpen }) {
   return (
     <div className="flex flex-col gap-4 mt-6 md:mt-0">
       {images.map((img, idx) => (
@@ -14,9 +14,6 @@ export default function StudyImages({ images, onOpen }) {
             alt={`Figure ${idx + 1}`}
             className="w-full h-auto"
           />
-          <figcaption className="text-sm text-gray-500 text-center mt-1">
-            Figure {idx + 1}
-          </figcaption>
         </figure>
       ))}
     </div>

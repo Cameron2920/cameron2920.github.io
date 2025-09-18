@@ -1,11 +1,45 @@
+import { useState } from "react";
+import { ImageModal } from "./ImageModal.jsx";
+import StudyImages from "./StudyImages.jsx";
 import FailoverDiagram from "./assets/failover.png";
 import EndoretWorkflow from "./assets/endoret-workflow.png";
 import EndoretScreenshot from "./assets/endoret-screenshot.png";
-import StudyImages from "./StudyImages.jsx";
-import {useState} from "react";
-import {ImageModal} from "./ImageModal.jsx";
+
+function SectionList({ title, items, images, onOpen }) {
+  if (!items || items.length === 0) return null;
+
+  return (
+    <div className="mb-6">
+      <h4 className="text-lg font-semibold mb-2">{title}</h4>
+      <ul className="list-disc list-inside text-gray-700 space-y-1">
+        {items.map((item, idx) => {
+          const match = item.match(/See Figure (\d+)/i);
+
+          if (match) {
+            const figIndex = parseInt(match[1], 10) - 1;
+            return (
+              <li key={idx}>
+                {item.replace(match[0], "")}
+                <span
+                  className="text-blue-600 cursor-pointer underline ml-1"
+                  onClick={() => onOpen(images?.[figIndex])}
+                >
+                  {match[0]}
+                </span>
+              </li>
+            );
+          }
+
+          return <li key={idx}>{item}</li>;
+        })}
+      </ul>
+    </div>
+  );
+}
 
 export default function CaseStudies() {
+  const [openImg, setOpenImg] = useState(null);
+
   const studies = [
     {
       title: "Failover Stack for Healthcare App",
@@ -28,12 +62,10 @@ export default function CaseStudies() {
       ],
       impact: [
         "Ensured 99.99% availability and reduced RPO and RTO from days to a couple of minutes.",
-        "Only increased AWS costs by ~%50.",
+        "Only increased AWS costs by ~50%.",
         "Delivered a fully compliant, production-ready failover system with zero downtime during testing."
       ],
-      images: [
-        FailoverDiagram
-      ],
+      images: [FailoverDiagram]
     },
     {
       title: "Appointment Scheduling Web App",
@@ -67,98 +99,72 @@ export default function CaseStudies() {
         "Daily check-ins, even brief ones, greatly reduce blockers and improve team productivity.",
         "Selecting familiar, well-supported technologies (Rails + Next.js) accelerated delivery while ensuring maintainability."
       ],
-      images: [
-        EndoretWorkflow,
-        EndoretScreenshot,
-      ]
-    },
-    // {
-    //   title: "Configurable Triggers for Medical Surveys",
-    //   context: "Healthcare provider needed flexible scheduling for patient surveys.",
-    //   solution:
-    //     "Implemented a dynamic scheduling engine with configurable time/event-based triggers and clinician-friendly controls.",
-    //   impact:
-    //     "Improved patient engagement by ~30% and reduced survey iteration time from weeks to hours.",
-    // },
-    // {
-    //   title: "Cross-Platform BLE Communication Library",
-    //   context: "Unified BLE communication for iOS, Android, and embedded devices.",
-    //   solution:
-    //     "Developed a cross-platform BLE API library with consistent abstractions, powering the client’s mixer app.",
-    //   impact:
-    //     "Reduced BLE-related bugs by 50% and accelerated cross-platform development.",
-    // },
-    // {
-    //   title: "Appointment Scheduling Web App",
-    //   context: "Healthcare org needed a simple, reliable scheduling system.",
-    //   solution:
-    //     "Led development of a lightweight web-based appointment scheduler with conflict detection and reminders.",
-    //   impact:
-    //     "Reduced scheduling conflicts by 40% and transitioned staff from manual spreadsheets.",
-    // },
-    // {
-    //   title: "AWS CDK Infrastructure Library",
-    //   context: "Multiple projects required repeatable, reliable AWS setups.",
-    //   solution:
-    //     "Created a reusable AWS CDK library with built-in load balancing, auto-scaling, SSL, and CDN support.",
-    //   impact:
-    //     "Standardized infra across 5+ projects, cutting setup time from weeks to days and reducing deployment errors.",
-    // },
+      images: [EndoretWorkflow, EndoretScreenshot]
+    }
   ];
 
-  const [openImg, setOpenImg] = useState(null);
-
   return (
-    <div className="max-w-5xl mx-auto px-6 py-16">
-      <h2 className="text-4xl font-bold mb-12 text-center">Case Studies</h2>
-      <div className="space-y-12">
+    <div className="max-w-7xl mx-auto px-8 py-20">
+      <h2 className="text-5xl font-extrabold mb-20 text-center bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+        Case Studies
+      </h2>
+
+      <div className="space-y-20">
         {studies.map((study) => (
-          <div
+          <article
             key={study.title}
             className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition"
           >
-            <h3 className="text-2xl font-semibold mb-4">{study.title}</h3>
+            <h3 className="text-2xl font-semibold mb-6">{study.title}</h3>
 
-            <div className="md:flex md:gap-6">
-              {/* Left: Text content */}
-              <div className="md:flex-1">
-                {["context", "challenge", "solution", "impact"].map((section) => (
-                  <div key={section} className="mb-4">
-                    <h4 className="text-lg font-semibold capitalize">{section}</h4>
-                    <ul className="list-disc list-inside text-gray-700 space-y-1">
-                      {study[section].map((point, idx) => {
-                        // Detect if "See Figure X" exists in the text
-                        const match = point.match(/See Figure (\d+)/i);
-
-                        if (match) {
-                          const figIndex = parseInt(match[1], 10) - 1; // Convert Figure # to zero-based index
-                          return (
-                            <li key={idx}>
-                              <span
-                                className="text-blue-600 cursor-pointer underline ml-1"
-                                onClick={() => setOpenImg(study.images[figIndex])}>
-                                {match[0]}
-                              </span>
-                              {point.replace(match[0], "")}
-                            </li>
-                          );
-                        }
-
-                        return <li key={idx}>{point}</li>;
-                      })}
-                    </ul>
-                  </div>
-                ))}
+            <div className="lg:flex lg:gap-8">
+              {/* Left column: details */}
+              <div className="lg:w-2/5">
+                <SectionList
+                  title="Context"
+                  items={study.context}
+                  images={study.images}
+                  onOpen={setOpenImg}
+                />
+                <SectionList
+                  title="Challenge"
+                  items={study.challenge}
+                  images={study.images}
+                  onOpen={setOpenImg}
+                />
+                <SectionList
+                  title="Solution"
+                  items={study.solution}
+                  images={study.images}
+                  onOpen={setOpenImg}
+                />
+                <SectionList
+                  title="Impact"
+                  items={study.impact}
+                  images={study.images}
+                  onOpen={setOpenImg}
+                />
+                {study.lessons && (
+                  <SectionList
+                    title="Lessons"
+                    items={study.lessons}
+                    images={study.images}
+                    onOpen={setOpenImg}
+                  />
+                )}
               </div>
 
-              {/* Right: Images */}
-              {study.images && study.images.length > 0 && (
-                <StudyImages images={study.images} onOpen={setOpenImg} />
+              {/* Right column: images */}
+              {study.images?.length > 0 && (
+                <div className="lg:w-3/5 mt-8 lg:mt-0">
+                  <StudyImages images={study.images} onOpen={setOpenImg} />
+                </div>
               )}
             </div>
-          </div>
+          </article>
         ))}
       </div>
+
       <ImageModal openImg={openImg} onClose={() => setOpenImg(null)} />
     </div>
   );
