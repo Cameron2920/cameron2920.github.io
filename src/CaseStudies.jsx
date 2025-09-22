@@ -4,6 +4,7 @@ import StudyImages from "./StudyImages.jsx";
 import FailoverDiagram from "./assets/failover.png";
 import EndoretWorkflow from "./assets/endoret-workflow.png";
 import EndoretScreenshot from "./assets/endoret-screenshot.png";
+import EventTrackerDiagram from "./assets/event-tracker.png";
 
 function SectionList({ title, items, images, onOpen }) {
   if (!items || items.length === 0) return null;
@@ -17,15 +18,18 @@ function SectionList({ title, items, images, onOpen }) {
 
           if (match) {
             const figIndex = parseInt(match[1], 10) - 1;
+            const parts = item.split(match[0]); // split around the matched text
+
             return (
               <li key={idx}>
-                {item.replace(match[0], "")}
+                {parts[0]}
                 <span
-                  className="text-blue-600 cursor-pointer underline ml-1"
+                  className="text-blue-600 cursor-pointer underline"
                   onClick={() => onOpen(images?.[figIndex])}
                 >
                   {match[0]}
                 </span>
+                {parts[1]}
               </li>
             );
           }
@@ -100,6 +104,35 @@ export default function CaseStudies() {
         "Selecting familiar, well-supported technologies (Rails + Next.js) accelerated delivery while ensuring maintainability."
       ],
       images: [EndoretWorkflow, EndoretScreenshot]
+    },
+    {
+      title: "High-Throughput Event Tracking System",
+      context: [
+        "Built to track user behavior and system events across a large-scale product.",
+        "Supports both authenticated and unauthenticated users.",
+        "Stakeholders needed powerful analytics and search capabilities on incoming events."
+      ],
+      challenge: [
+        "System had to handle thousands of events per second reliably.",
+        "Existing synchronous processing caused high latency and bottlenecks.",
+        "Users required real-time and historical analytics access with flexible search.",
+        "Solution needed to scale automatically with variable traffic."
+      ],
+      solution: [
+        "Implemented an event ingestion pipeline using Kafka to decouple producers and consumers, reducing latency.",
+        "Offloaded heavy processing to background jobs to avoid blocking real-time ingestion.",
+        "Indexed events in Elasticsearch to enable fast, flexible search and analytics for stakeholders.",
+        "Configured auto-scaling to handle traffic spikes and ensure high availability.",
+        "Designed schema and access controls to handle authenticated and unauthenticated events securely.",
+        "See Figure 1 for an architectural diagram."
+      ],
+      impact: [
+        "System reliably processes ~1,000 events per second with sub-second ingestion latency.",
+        "Stakeholders can query and analyze events in near real-time, improving decision-making.",
+        "Automatic scaling ensures stability under load without manual intervention.",
+        "The architecture is fully extensible for future features and additional event types.",
+      ],
+      images: [EventTrackerDiagram]
     }
   ];
 
