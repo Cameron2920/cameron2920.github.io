@@ -3,6 +3,9 @@ import { ImageModal } from "./ImageModal.jsx";
 import ProjectImages from "./ProjectImages.jsx";
 import CycleLogScreenshot1 from "./assets/cycle-log-screenshot-1.png";
 import CycleLogScreenshot2 from "./assets/cycle-log-screenshot-2.png";
+import CycleMapRoute from "./assets/cycle-map-route.png";
+import CycleMapNavigation from "./assets/cycle-map-navigation.png";
+import CycleMapSearch from "./assets/cycle-map-search.png";
 
 function SectionList({ title, items, images, onOpen }) {
   if (!items || items.length === 0) return null;
@@ -86,6 +89,26 @@ export default function Projects() {
       ],
       techStack: ["Next.js", "Tailwind"],
       images: [CycleLogScreenshot2, CycleLogScreenshot1],
+      imageLayout: "vertical",
+    },
+    {
+      title: "Cycle Map",
+      description: [
+        "A mobile app that helps cyclists plan and follow routes.",
+      ],
+      links: [
+        "https://github.com/Cameron2920/Cycling-Map",
+      ],
+      features: [
+        "🗺️ Interactive Map – Browse routes on a Mapbox-powered map.",
+        "📍 Route Planning – Search for start and end locations with geocoding.",
+        "🔊 Turn-by-Turn Navigation – Spoken instructions and vibration alerts for each step.",
+        "📏 Distance to Next Turn – Real-time distance updates while navigating.",
+        "🔋 Background Navigation – Keeps tracking your ride even when the app is in the background.",
+      ],
+      techStack: ["Expo", "React Native", "Mapbox"],
+      images: [CycleMapRoute, CycleMapNavigation, CycleMapSearch],
+      imageLayout: "horizontal",
     },
   ];
 
@@ -107,7 +130,7 @@ export default function Projects() {
               </h3>
 
               <div className="md:flex md:gap-12">
-                {/* Left column: details */}
+                {/* Details column */}
                 <div className="md:flex-1">
                   <SectionList
                     title="Description"
@@ -135,13 +158,20 @@ export default function Projects() {
                   />
                 </div>
 
-                {/* Right column: screenshots */}
-                {project.images?.length > 0 && (
+                {/* Images */}
+                {project.images?.length > 0 && project.imageLayout === "vertical" && (
                   <div className="mt-8 md:mt-0 md:flex-1">
-                    <ProjectImages images={project.images} onOpen={setOpenImg} />
+                    <ProjectImages images={project.images} onOpen={setOpenImg} isHorizontal={false} />
                   </div>
                 )}
               </div>
+
+              {/* For horizontal layout, render images below details */}
+              {project.images?.length > 0 && project.imageLayout === "horizontal" && (
+                <div className="mt-8">
+                  <ProjectImages images={project.images} onOpen={setOpenImg} isHorizontal={true} />
+                </div>
+              )}
             </div>
           </article>
         ))}
